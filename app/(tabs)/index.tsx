@@ -1,79 +1,176 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import {StyleSheet, View, Text, ScrollView, Alert, Image} from "react-native";
+import ChannelCardButton from "@/components/ChannelCardButton";
+import {useEffect, useState, useCallback} from "react";
+import {useTVHandler} from "@/contexts/TVHandlerContext";
+import MediaContainer from "@/components/MediaContainer";
+import {useTVMedia} from "@/hooks/useTVMedia";
+import {useRouter} from 'expo-router';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { useScale } from '@/hooks/useScale';
+import {Stream} from "@/types/Stream.type";
+import {mapStreams} from "@/utils/stream.utils";
 
 export default function HomeScreen() {
-  const styles = useHomeScreenStyles();
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
+  const [streams, setStreams] = useState<Stream[]>([]);
+  const [loading, setLoading] = useState(true);
+  const {focusedItem, setMaxItems, setOnSelect, isPlayButtonFocused, setOnPlayPause} = useTVHandler();
+  const {handleTVPlayPause} = useTVMedia(streams);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const streamsData = await getStreams();
+      const logosData = await getLogos();
+      const mappedStreams = mapStreams(streamsData, logosData);
+      console.log(JSON.stringify(mappedStreams, null, 2));
+      setStreams(mappedStreams);
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    // Configure TV handler for this screen
+    setMaxItems(streams.length);
+
+    setOnSelect((item: number) => {
+      const selectedStream = streams[item];
+      if (selectedStream) {
+        console.log('Selected stream:', selectedStream.title);
       }
-    >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{' '}
-          to see changes. Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this
-          starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText>{' '}
-          to get a fresh <ThemedText type="defaultSemiBold">app</ThemedText>{' '}
-          directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    });
+
+    return () => {
+      setOnSelect(() => { });
+    };
+  }, [streams.length]);
+
+  // Configure TV handler for play/pause - show video info when play button is pressed
+  useEffect(() => {
+    const handlePlayPause = () => {
+      const currentStream = streams[focusedItem];
+      if (currentStream) {
+        console.log('TV Play/Pause pressed, playing:', currentStream.title);
+      }
+    };
+
+    setOnPlayPause(handlePlayPause);
+
+    return () => {
+      setOnPlayPause(() => { });
+    };
+  }, [streams, focusedItem, setOnPlayPause]);
+
+  const getStreams = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('https://iptv-org.github.io/api/streams.json');
+      const streamsData = await response.json();
+
+      // Take first 20 channels for demo
+      const limitedStreams = streamsData.filter((stream: any) => stream.channel !== null).slice(0, 20).map((stream: any) => ({
+        channel: stream.channel,
+        feed: stream.feed,
+        title: stream.title,
+        url: stream.url,
+        referrer: stream.referrer,
+        user_agent: stream.user_agent,
+        quality: stream.quality,
+        logo: stream.logo,
+      }));
+
+      return limitedStreams;
+    } catch (error) {
+      console.error('Error fetching streams:', error);
+      Alert.alert('Error', 'Failed to load streams', [{text: 'OK', onPress: () => { }}]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getLogos = async () => {
+    try {
+      const response = await fetch('https://iptv-org.github.io/api/logos.json');
+      const logos = await response.json();
+      return logos;
+    } catch (error) {
+      console.error('Error fetching logos:', error);
+      return null;
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.loadingText}>Loading streams...</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Image
+          source={require("@/assets/images/logo.png")}
+          style={styles.logo}
+          resizeMode="contain"
+          width={200}
+          height={80}
+        />
+      </View>
+      <MediaContainer stream={streams[focusedItem]} />
+      <ScrollView
+        style={styles.scrollView}
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+      >
+        {streams.map((stream, index) => (
+          <ChannelCardButton
+            key={stream.title + index}
+            title={stream.title}
+            logo={stream.logo}
+            onPress={() => {
+              console.log(`Selected: ${stream.title}`);
+            }}
+            isFocused={focusedItem === index && !isPlayButtonFocused}
+            hasTVPreferredFocus={focusedItem === index && !isPlayButtonFocused}
+          />
+        ))}
+      </ScrollView>
+    </View>
   );
 }
 
-const useHomeScreenStyles = function () {
-  const scale = useScale();
-  return StyleSheet.create({
-    titleContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8 * scale,
-    },
-    stepContainer: {
-      gap: 8 * scale,
-      marginBottom: 8 * scale,
-    },
-    reactLogo: {
-      height: 178 * scale,
-      width: 290 * scale,
-      bottom: 0,
-      left: 0,
-      position: 'absolute',
-    },
-  });
-};
+const styles = StyleSheet.create({
+  container: {
+    display: 'flex',
+    height: '100%',
+    backgroundColor: '#000',
+    padding: 60,
+    justifyContent: 'space-between',
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 40,
+    width: '100%',
+  },
+  logo: {
+    width: 200,
+    height: 80,
+  },
+
+  /**
+   * Scroll view
+   */
+  scrollView: {
+    height: 168,
+    marginBottom: 20,
+  },
+  loadingText: {
+    fontSize: 24,
+    color: '#fff',
+    textAlign: 'center',
+    marginTop: 100,
+    fontFamily: 'Montserrat_400Regular',
+  },
+});

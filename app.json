@@ -31,7 +31,8 @@
     "ios": {
       "splash": {
         "image": "./assets/images/splash.png"
-      }
+      },
+      "bundleIdentifier": "com.gwenael.bihan.BigScreenApp"
     },
     "web": {
       "bundler": "metro",
