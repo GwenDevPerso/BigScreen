@@ -2,6 +2,7 @@ import React from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
 import {useRouter, useLocalSearchParams} from 'expo-router';
 import MediaPlayer from '@/components/MediaPlayer';
+import {SpatialNavigationNode} from 'react-tv-space-navigation';
 
 export default function PlayerScreen() {
     const router = useRouter();
@@ -22,9 +23,13 @@ export default function PlayerScreen() {
             <View style={styles.container}>
                 <Text style={styles.errorText}>No stream data available</Text>
                 <Text style={styles.debugText}>Params: {JSON.stringify(params)}</Text>
-                <Pressable onPress={handleBackPress} style={styles.backButton}>
-                    <Text style={styles.backButtonText}>Go Back</Text>
-                </Pressable>
+                <SpatialNavigationNode isFocusable>
+                    {({isFocused: spatialFocused}) => (
+                        <Pressable onPress={handleBackPress} style={[styles.backButton]}>
+                            <Text style={styles.backButtonText}>Go Back</Text>
+                        </Pressable>
+                    )}
+                </SpatialNavigationNode>
             </View>
         );
     }
@@ -32,9 +37,13 @@ export default function PlayerScreen() {
     return (
         <View style={styles.container}>
             <MediaPlayer stream={streamData} />
-            <Pressable onPress={handleBackPress} style={styles.backButton}>
-                <Text style={styles.backButtonText}>← Back to Home</Text>
-            </Pressable>
+            <SpatialNavigationNode isFocusable>
+                {({isFocused: spatialFocused}) => (
+                    <Pressable onPress={handleBackPress} style={[styles.backButton, styles.focused]}>
+                        <Text style={styles.backButtonText}>← Back to Home</Text>
+                    </Pressable>
+                )}
+            </SpatialNavigationNode>
         </View>
     );
 }
@@ -75,4 +84,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: 'Montserrat_600SemiBold',
     },
+    focused: {
+        backgroundColor: '#007AFF',
+    }
 });

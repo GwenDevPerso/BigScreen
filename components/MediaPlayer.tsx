@@ -10,8 +10,6 @@ export default function MediaPlayer({stream}: {stream: Stream;}) {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>{stream?.title}</Text>
-            <Text style={styles.channel}>{stream?.channel}</Text>
-            <Text style={styles.url}>URL: {stream?.url}</Text>
 
             <Video
                 source={{

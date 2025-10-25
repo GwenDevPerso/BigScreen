@@ -4,18 +4,15 @@ import {Stream} from "../types/Stream.type";
 import {useMedia} from "../contexts/MediaContext";
 import {useTVHandler} from "../contexts/TVHandlerContext";
 import {useRouter} from "expo-router";
+import {SpatialNavigationNode} from 'react-tv-space-navigation';
 
 
 export default function MediaContainer({stream}: {stream: Stream;}) {
-    console.log(JSON.stringify(stream, null, 2));
-    const {isStreamPlaying, togglePlayPause} = useMedia();
+    const {isStreamPlaying} = useMedia();
     const {isPlayButtonFocused} = useTVHandler();
     const router = useRouter();
 
     const isThisStreamPlaying = isStreamPlaying(stream);
-
-    console.log('MediaContainer - isPlayButtonFocused:', isPlayButtonFocused);
-    console.log('MediaContainer - stream:', stream?.title);
 
     if (!stream) {
         return (
@@ -27,40 +24,45 @@ export default function MediaContainer({stream}: {stream: Stream;}) {
 
     return (
         <View style={styles.container}>
-            {/* <Image source={{uri: stream.logo?.url}} style={styles.image} /> */}
             <View style={styles.infoContainer}>
                 <Text style={styles.channel}>{stream.channel}</Text>
                 <Text style={styles.title}>{stream.title}</Text>
 
-                <Pressable
-                    style={[
-                        styles.playButton,
-                        isPlayButtonFocused && styles.playButtonFocused
-                    ]}
-                    onPress={() => {
-                        console.log('Play button pressed, stream:', stream.title);
-                        console.log('Navigating to /player with stream:', JSON.stringify(stream));
-                        router.push({
-                            pathname: '/player',
-                            params: {
-                                stream: JSON.stringify(stream)
-                            }
-                        });
-                    }}
-                    hasTVPreferredFocus={isPlayButtonFocused}
-                    tvParallaxProperties={{
-                        enabled: false,
-                    }}
+                <SpatialNavigationNode
+                    isFocusable
                 >
-                    <Image
-                        source={isThisStreamPlaying
-                            ? require("@/assets/images/pause.png")
-                            : require("@/assets/images/play.png")
-                        }
-                        style={styles.icon}
-                        resizeMode="contain"
-                    />
-                </Pressable>
+                    {({isFocused: spatialFocused}) => (
+                        <Pressable
+                            style={[
+                                styles.playButton,
+                                (isPlayButtonFocused || spatialFocused) && styles.playButtonFocused
+                            ]}
+                            onPress={() => {
+                                console.log('Play button pressed, stream:', stream.title);
+                                console.log('Navigating to /player with stream:', JSON.stringify(stream));
+                                router.push({
+                                    pathname: '/player',
+                                    params: {
+                                        stream: JSON.stringify(stream)
+                                    }
+                                });
+                            }}
+                            hasTVPreferredFocus={isPlayButtonFocused}
+                            tvParallaxProperties={{
+                                enabled: false,
+                            }}
+                        >
+                            <Image
+                                source={isThisStreamPlaying
+                                    ? require("@/assets/images/pause.png")
+                                    : require("@/assets/images/play.png")
+                                }
+                                style={styles.icon}
+                                resizeMode="contain"
+                            />
+                        </Pressable>
+                    )}
+                </SpatialNavigationNode>
             </View>
         </View>
     );
@@ -77,12 +79,7 @@ const styles = StyleSheet.create({
     infoContainer: {
         flexDirection: 'column',
         justifyContent: 'flex-start',
-    },
-    image: {
-        width: 100,
-        height: 100,
-        borderRadius: 10,
-        marginRight: 20,
+        gap: 24,
     },
     channel: {
         fontSize: 44,
@@ -109,9 +106,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: 80,
         height: 48,
-        borderRadius: 10,
+        borderRadius: 24,
         marginTop: 20,
-        padding: 10,
+        paddingHorizontal: 24,
+        paddingVertical: 8,
         shadowOpacity: 0,
         shadowRadius: 0,
         shadowOffset: {width: 0, height: 0},
@@ -120,7 +118,7 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     },
     playButtonFocused: {
-        backgroundColor: '#007AFF',
+        backgroundColor: '#00A0DF',
         transform: [{scale: 1.05}],
         shadowOpacity: 0,
         shadowRadius: 0,

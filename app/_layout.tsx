@@ -11,6 +11,7 @@ import {
 import {useColorScheme} from '@/hooks/useColorScheme';
 import TVHandlerProvider from '@/contexts/TVHandlerContext';
 import MediaProvider from '@/contexts/MediaContext';
+import {SpatialNavigationRoot} from 'react-tv-space-navigation';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -41,16 +42,18 @@ export default function RootLayout() {
   }
 
   return (
-    <TVHandlerProvider>
-      <MediaProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{headerShown: false}} />
-            <Stack.Screen name="player" options={{headerShown: false}} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-        </ThemeProvider>
-      </MediaProvider>
-    </TVHandlerProvider>
+    <SpatialNavigationRoot>
+      <TVHandlerProvider>
+        <MediaProvider>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <Stack>
+              <Stack.Screen name="index" options={{headerShown: false}} />
+              <Stack.Screen name="player" options={{headerShown: false}} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+          </ThemeProvider>
+        </MediaProvider>
+      </TVHandlerProvider>
+    </SpatialNavigationRoot>
   );
 }

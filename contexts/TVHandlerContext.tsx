@@ -3,52 +3,20 @@ import {TVEventHandler, BackHandler} from 'react-native';
 
 type TVHandlerContextType = {
     focusedItem: number;
-    setFocusedItem: (item: number) => void;
-    maxItems: number;
     setMaxItems: (max: number) => void;
     isPlayButtonFocused: boolean;
-    setIsPlayButtonFocused: (focused: boolean) => void;
-    onSelect?: (item: number) => void;
     setOnSelect: (callback: (item: number) => void) => void;
-    onMenu?: () => void;
-    setOnMenu: (callback: () => void) => void;
-    onPlayPause?: () => void;
     setOnPlayPause: (callback: () => void) => void;
-    onBack?: () => void;
-    setOnBack: (callback: () => void) => void;
-    navigateRight: () => void;
-    navigateLeft: () => void;
-    navigateUp: () => void;
-    navigateDown: () => void;
-    handleSelect: () => void;
-    handleMenu: () => void;
-    handlePlayPause: () => void;
-    handleBack: () => void;
 };
 
 const TVHandlerContext = createContext<TVHandlerContextType>({
     focusedItem: 0,
-    setFocusedItem: () => { },
-    maxItems: 0,
     setMaxItems: () => { },
     isPlayButtonFocused: false,
-    setIsPlayButtonFocused: () => { },
-    onSelect: undefined,
     setOnSelect: () => { },
-    onMenu: undefined,
-    setOnMenu: () => { },
-    onPlayPause: undefined,
     setOnPlayPause: () => { },
-    onBack: undefined,
-    setOnBack: () => { },
-    navigateRight: () => { },
-    navigateLeft: () => { },
-    navigateUp: () => { },
-    navigateDown: () => { },
-    handleSelect: () => { },
-    handleMenu: () => { },
-    handlePlayPause: () => { },
-    handleBack: () => { },
+
+
 });
 
 export const useTVHandler = () => {
@@ -64,9 +32,7 @@ export default function TVHandlerProvider({children}: {children: React.ReactNode
     const [maxItems, setMaxItems] = useState(0);
     const [isPlayButtonFocused, setIsPlayButtonFocused] = useState(false);
     const [onSelect, setOnSelect] = useState<((item: number) => void) | undefined>();
-    const [onMenu, setOnMenu] = useState<(() => void) | undefined>();
     const [onPlayPause, setOnPlayPause] = useState<(() => void) | undefined>();
-    const [onBack, setOnBack] = useState<(() => void) | undefined>();
 
     const navigateRight = useCallback(() => {
         if (isPlayButtonFocused) {
@@ -111,29 +77,12 @@ export default function TVHandlerProvider({children}: {children: React.ReactNode
         }
     }, [focusedItem, onSelect]);
 
-    const handleMenu = useCallback(() => {
-        console.log('Menu button pressed');
-        if (onMenu) {
-            onMenu();
-        }
-    }, [onMenu]);
-
     const handlePlayPause = useCallback(() => {
         console.log('Play/Pause pressed');
         if (onPlayPause) {
             onPlayPause();
         }
     }, [onPlayPause]);
-
-    const handleBack = useCallback(() => {
-        console.log('Back button pressed');
-        if (onBack) {
-            onBack();
-        } else if (onMenu) {
-            // Fallback to menu handler if no back handler is set
-            onMenu();
-        }
-    }, [onBack, onMenu]);
 
     useEffect(() => {
         // Add TV event listener using the correct API
@@ -150,48 +99,28 @@ export default function TVHandlerProvider({children}: {children: React.ReactNode
                 handleSelect();
             } else if (evt && evt.eventType === 'playPause') {
                 handlePlayPause();
-            } else if (evt && evt.eventType === 'menu') {
-                handleMenu();
             }
         });
 
         // Handle back navigation (Android TV back button, Apple TV menu button)
         const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
             console.log('Back button pressed');
-            handleBack();
             return true; // Prevent default behavior
         });
 
         // Cleanup
         return () => {
-            subscription.remove();
+            subscription?.remove();
             backHandler.remove();
         };
-    }, [navigateRight, navigateLeft, navigateUp, navigateDown, handleSelect, handleMenu, handlePlayPause, handleBack]);
+    }, [navigateRight, navigateLeft, navigateUp, navigateDown, handleSelect, handlePlayPause]);
 
     const value: TVHandlerContextType = {
         focusedItem,
-        setFocusedItem,
-        maxItems,
         setMaxItems,
         isPlayButtonFocused,
-        setIsPlayButtonFocused,
-        onSelect,
         setOnSelect,
-        onMenu,
-        setOnMenu,
-        onPlayPause,
         setOnPlayPause,
-        onBack,
-        setOnBack,
-        navigateRight,
-        navigateLeft,
-        navigateUp,
-        navigateDown,
-        handleSelect,
-        handleMenu,
-        handlePlayPause,
-        handleBack,
     };
 
     return (
