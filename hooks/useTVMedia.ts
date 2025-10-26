@@ -1,36 +1,27 @@
 import {useCallback, useEffect, useRef} from 'react';
 import {useMedia} from '../contexts/MediaContext';
-import {useTVHandler} from '../contexts/TVHandlerContext';
 import {Stream} from '../types/Stream.type';
 
 export const useTVMedia = (streams: Stream[]) => {
-    const { focusedItem } = useTVHandler();
-    const { playStream, pauseStream, isStreamPlaying } = useMedia();
+    const { playStream, pauseStream, isStreamPlaying, selectedStream } = useMedia();
     const streamsRef = useRef(streams);
 
-    // Keep streams ref up to date
     useEffect(() => {
         streamsRef.current = streams;
     }, [streams]);
 
     const handleTVPlayPause = useCallback(() => {
-        const focusedStream = streamsRef.current[focusedItem];
-        if (focusedStream) {
-            if (isStreamPlaying(focusedStream)) {
+        if (selectedStream) {
+            if (isStreamPlaying(selectedStream)) {
                 pauseStream();
             } else {
-                playStream(focusedStream);
+                playStream(selectedStream);
             }
         }
-    }, [focusedItem, isStreamPlaying, playStream, pauseStream]);
-
-    // Memoize the focused stream to avoid unnecessary re-renders
-    const focusedStream = streams[focusedItem] || null;
-    const isFocusedStreamPlaying = focusedStream ? isStreamPlaying(focusedStream) : false;
+    }, [selectedStream, isStreamPlaying, playStream, pauseStream]);
 
     return {
         handleTVPlayPause,
-        focusedStream,
-        isFocusedStreamPlaying,
+        selectedStream,
     };
 };

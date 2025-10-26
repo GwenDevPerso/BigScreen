@@ -93,13 +93,13 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '500',
         textAlign: 'center',
-        fontFamily: 'Montserrat_600SemiBold',
+        fontFamily: 'Montserrat',
     },
     focusedTitle: {
         color: '#fff',
         fontWeight: 'bold',
         fontSize: 20,
-        fontFamily: 'Montserrat_700Bold',
+        fontFamily: 'Montserrat',
     },
     logo: {
         width: 60,

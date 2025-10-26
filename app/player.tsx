@@ -78,14 +78,14 @@ const styles = StyleSheet.create({
         fontSize: 18,
         textAlign: 'center',
         marginTop: 100,
-        fontFamily: 'Montserrat_400Regular',
+        fontFamily: 'Montserrat',
     },
     debugText: {
         color: '#ccc',
         fontSize: 12,
         textAlign: 'center',
         marginTop: 20,
-        fontFamily: 'Montserrat_400Regular',
+        fontFamily: 'Montserrat',
     },
     backButton: {
         backgroundColor: '#333',
@@ -102,7 +102,8 @@ const styles = StyleSheet.create({
     backButtonText: {
         color: '#fff',
         fontSize: 16,
-        fontFamily: 'Montserrat_600SemiBold',
+        fontFamily: 'Montserrat',
+        fontWeight: '600',
     },
     focused: {
         backgroundColor: '#00A0DF',
