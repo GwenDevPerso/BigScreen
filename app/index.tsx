@@ -13,17 +13,6 @@ export default function HomeScreen() {
   const {selectedStream, setSelectedStream, isStreamPlaying} = useMedia();
   const route = usePathname();
 
-  const handlePlay = () => {
-    if (selectedStream) {
-      router.push({
-        pathname: '/player',
-        params: {
-          stream: JSON.stringify(selectedStream)
-        }
-      });
-    }
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       const streamsData = await getStreams();

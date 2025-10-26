@@ -1,22 +1,10 @@
 import React, {useState} from "react";
-import {View, StyleSheet, Text, Pressable} from "react-native";
+import {View, StyleSheet, Text} from "react-native";
 import Video from "react-native-video";
 import {Stream} from "../types/Stream.type";
-import {useRouter} from "expo-router";
 
 export default function MediaPlayer({stream}: {stream: Stream;}) {
     const [error, setError] = useState<string | null>(null);
-    const [retryCount, setRetryCount] = useState(0);
-    const router = useRouter();
-
-    const handleRetry = () => {
-        setError(null);
-        setRetryCount(prev => prev + 1);
-    };
-
-    const handleBack = () => {
-        router.back();
-    };
 
     return (
         <View style={styles.container}>
@@ -29,13 +17,8 @@ export default function MediaPlayer({stream}: {stream: Stream;}) {
                 </View>
             ) : (
                 <Video
-                    key={retryCount}
                     source={{
                         uri: stream.url,
-                        headers: stream.referrer || stream.user_agent ? {
-                            ...(stream.referrer && {'Referer': stream.referrer}),
-                            ...(stream.user_agent && {'User-Agent': stream.user_agent}),
-                        } : undefined
                     }}
                     style={styles.video}
                     controls

@@ -41,12 +41,8 @@ export default function MediaProvider({children}: {children: ReactNode;}) {
             console.log('Stopping current stream:', selectedStream.title);
         }
 
-        // Start the new stream
         setIsPlaying(true);
-        console.log('Starting stream:', stream.title);
 
-        // Here you would integrate with your actual media player
-        // e.g., Video component, audio player, etc.
     }, [isPlaying, selectedStream]);
 
     const pauseStream = useCallback(() => {

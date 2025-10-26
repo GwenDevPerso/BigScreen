@@ -16,9 +16,6 @@ export default function PlayerScreen() {
         router.back();
     };
 
-    console.log('PlayerScreen - params:', params);
-    console.log('PlayerScreen - streamData:', streamData);
-
     if (!streamData) {
         return (
             <View style={styles.container}>
