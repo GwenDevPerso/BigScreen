@@ -42,7 +42,7 @@ export default function HomeScreen() {
       const streamsData = await response.json();
 
       // Take first 20 channels for demo
-      const limitedStreams = streamsData.filter((stream: any) => stream.channel !== null).slice(0, 20).map((stream: any) => ({
+      const limitedStreams = streamsData.filter((stream: any) => stream.channel !== null && stream.quality !== null).slice(0, 30).map((stream: any) => ({
         channel: stream.channel,
         feed: stream.feed,
         title: stream.title,
