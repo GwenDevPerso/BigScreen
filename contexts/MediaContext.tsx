@@ -6,12 +6,13 @@ type MediaContextType = {
 
     selectedStream: Stream | null;
     setSelectedStream: (stream: Stream | null) => void;
+
     // Media control functions
     playStream: (stream: Stream) => void;
     pauseStream: () => void;
 
     // Utility functions
-    isStreamPlaying: (stream: Stream) => boolean;
+    isStreamPlaying: (stream: Stream | null) => boolean;
 };
 
 const MediaContext = createContext<MediaContextType>({
@@ -55,8 +56,8 @@ export default function MediaProvider({children}: {children: ReactNode;}) {
         }
     }, [isPlaying, selectedStream]);
 
-    const isStreamPlaying = useCallback((stream: Stream) => {
-        return isPlaying && selectedStream?.title === stream.title;
+    const isStreamPlaying = useCallback((stream: Stream | null) => {
+        return isPlaying && selectedStream?.url === stream?.url;
     }, [isPlaying, selectedStream]);
 
     const value: MediaContextType = {

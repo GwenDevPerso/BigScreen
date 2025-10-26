@@ -5,70 +5,61 @@ import {useMedia} from '../contexts/MediaContext';
 import {Stream} from '../types/Stream.type';
 
 interface ChannelCardButtonProps {
-    title: string;
     logo?: Logo;
-    onPress: () => void;
-    isFocused?: boolean;
-    hasTVPreferredFocus?: boolean;
-    focusId?: string;
-    stream?: Stream;
+    stream: Stream;
 }
 
 export default function ChannelCardButton({
-    title,
     logo,
-    onPress,
-    isFocused = false,
-    hasTVPreferredFocus = false,
-    focusId,
-    stream
+    stream,
 }: ChannelCardButtonProps) {
-    const {selectedStream} = useMedia();
-
-    // Check if this stream is selected but not focused
-    const isSelected = stream && selectedStream && stream.url === selectedStream.url;
-    const isSelectedButNotFocused = isSelected && !isFocused;
+    const {selectedStream, setSelectedStream} = useMedia();
 
     return (
-        <SpatialNavigationNode
-            isFocusable
-        >
-            {({isFocused: spatialFocused}) => (
-                <Pressable
-                    style={[
-                        styles.container,
-                        (isFocused || spatialFocused) && styles.focusedContainer,
-                        isSelectedButNotFocused && styles.selectedContainer
-                    ]}
-                    onPress={onPress}
-                    hasTVPreferredFocus={hasTVPreferredFocus}
-                    tvParallaxProperties={{
-                        enabled: false,
-                    }}
-                >
-                    <View style={styles.content}>
-                        {logo && (
-                            <Image
-                                source={{uri: logo.url}}
-                                style={[
-                                    styles.logo,
-                                    (isFocused || spatialFocused) && styles.focusedLogo
-                                ]}
-                                resizeMode="contain"
-                                onError={() => {
-                                    console.log('Failed to load logo:', logo);
-                                }}
-                            />
-                        )}
-                        <Text style={[
-                            styles.title,
-                            (isFocused || spatialFocused) && styles.focusedTitle
-                        ]}>
-                            {title}
-                        </Text>
-                    </View>
-                </Pressable>
-            )}
+        <SpatialNavigationNode isFocusable={true} onSelect={() => {
+            if (stream) {
+                setSelectedStream(stream);
+            }
+        }}>
+            {({isFocused}) => {
+                return (
+                    <Pressable
+                        style={[
+                            styles.container,
+                            isFocused && styles.focusedContainer,
+                            selectedStream?.url === stream?.url && styles.selectedContainer
+                        ]}
+                        onPress={() => {
+                            console.log('Selected stream:', stream.title);
+                            if (stream) {
+                                setSelectedStream(stream);
+                            }
+                        }}
+                    >
+                        <View style={styles.content}>
+                            {logo && (
+                                <Image
+                                    source={{uri: logo.url}}
+                                    style={[
+                                        styles.logo,
+                                        isFocused && styles.focusedLogo
+                                    ]}
+                                    resizeMode="contain"
+                                    onError={() => {
+                                        console.log('Failed to load logo:', logo);
+                                    }}
+                                />
+                            )}
+                            <Text style={[
+                                styles.title,
+                                isFocused && styles.focusedTitle
+                            ]}>
+                                {stream?.title}
+                            </Text>
+                        </View>
+                    </Pressable>
+                );
+            }}
         </SpatialNavigationNode>
     );
 }
@@ -79,12 +70,11 @@ const styles = StyleSheet.create({
         backgroundColor: "#364250",
         opacity: 0.85,
         borderRadius: 8,
-        marginHorizontal: 8,
+        marginRight: 10,
         width: 168,
         height: 168,
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: 10,
         shadowOpacity: 0,
         shadowRadius: 0,
         shadowOffset: {width: 0, height: 0},

@@ -1,12 +1,13 @@
 import React from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
-import {useRouter, useLocalSearchParams} from 'expo-router';
+import {useRouter, useLocalSearchParams, usePathname} from 'expo-router';
 import MediaPlayer from '@/components/MediaPlayer';
-import {SpatialNavigationNode} from 'react-tv-space-navigation';
+import {SpatialNavigationNode, SpatialNavigationRoot} from 'react-tv-space-navigation';
 
 export default function PlayerScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
+    const route = usePathname();
 
     // Get stream data from params
     const streamData = params.stream ? JSON.parse(params.stream as string) : null;
@@ -23,9 +24,17 @@ export default function PlayerScreen() {
             <View style={styles.container}>
                 <Text style={styles.errorText}>No stream data available</Text>
                 <Text style={styles.debugText}>Params: {JSON.stringify(params)}</Text>
-                <SpatialNavigationNode isFocusable>
+                <SpatialNavigationNode
+                    isFocusable
+                    onSelect={handleBackPress}
+                >
                     {({isFocused: spatialFocused}) => (
-                        <Pressable onPress={handleBackPress} style={[styles.backButton]}>
+                        <Pressable
+                            style={[
+                                styles.backButton,
+                                spatialFocused && styles.focused
+                            ]}
+                        >
                             <Text style={styles.backButtonText}>Go Back</Text>
                         </Pressable>
                     )}
@@ -35,16 +44,27 @@ export default function PlayerScreen() {
     }
 
     return (
-        <View style={styles.container}>
-            <MediaPlayer stream={streamData} />
-            <SpatialNavigationNode isFocusable>
-                {({isFocused: spatialFocused}) => (
-                    <Pressable onPress={handleBackPress} style={[styles.backButton, styles.focused]}>
-                        <Text style={styles.backButtonText}>← Back to Home</Text>
-                    </Pressable>
-                )}
-            </SpatialNavigationNode>
-        </View>
+        <SpatialNavigationRoot isActive={route === '/player'}>
+
+            <View style={styles.container}>
+                <MediaPlayer stream={streamData} />
+                <SpatialNavigationNode
+                    isFocusable
+                    onSelect={handleBackPress}
+                >
+                    {({isFocused: spatialFocused}) => (
+                        <Pressable
+                            style={[
+                                styles.backButton,
+                                spatialFocused && styles.focused
+                            ]}
+                        >
+                            <Text style={styles.backButtonText}>← Back to Home</Text>
+                        </Pressable>
+                    )}
+                </SpatialNavigationNode>
+            </View>
+        </SpatialNavigationRoot>
     );
 }
 
@@ -85,6 +105,6 @@ const styles = StyleSheet.create({
         fontFamily: 'Montserrat_600SemiBold',
     },
     focused: {
-        backgroundColor: '#007AFF',
+        backgroundColor: '#00A0DF',
     }
 });
