@@ -133,7 +133,7 @@ export default function HomeScreen() {
             </SpatialNavigationNode>
           </View>
           {/* Channels */}
-          <SpatialNavigationScrollView horizontal offsetFromStart={10}>
+          <SpatialNavigationScrollView horizontal>
             <SpatialNavigationView direction="horizontal">
               {streams.map((stream, index) => (
                 <ChannelCardButton

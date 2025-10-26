@@ -13,14 +13,19 @@ export default function ChannelCardButton({
     logo,
     stream,
 }: ChannelCardButtonProps) {
-    const {selectedStream, setSelectedStream} = useMedia();
+    const {selectedStream, setSelectedStream, setFocusedStream, focusedStream} = useMedia();
 
     return (
-        <SpatialNavigationNode isFocusable={true} onSelect={() => {
-            if (stream) {
-                setSelectedStream(stream);
-            }
-        }}>
+        <SpatialNavigationNode isFocusable={true}
+            onFocus={() => {
+                setFocusedStream(stream);
+                console.log('Focus on ChannelCardButton', stream.title);
+            }}
+            onSelect={() => {
+                if (stream) {
+                    setSelectedStream(stream);
+                }
+            }}>
             {({isFocused}) => {
                 return (
                     <Pressable
@@ -30,9 +35,8 @@ export default function ChannelCardButton({
                             selectedStream?.url === stream?.url && styles.selectedContainer
                         ]}
                         onPress={() => {
-                            console.log('Selected stream:', stream.title);
-                            if (stream) {
-                                setSelectedStream(stream);
+                            if (focusedStream) {
+                                setSelectedStream(focusedStream);
                             }
                         }}
                     >

@@ -7,6 +7,9 @@ type MediaContextType = {
     selectedStream: Stream | null;
     setSelectedStream: (stream: Stream | null) => void;
 
+    focusedStream: Stream | null;
+    setFocusedStream: (stream: Stream | null) => void;
+
     // Media control functions
     playStream: (stream: Stream) => void;
     pauseStream: () => void;
@@ -18,6 +21,8 @@ type MediaContextType = {
 const MediaContext = createContext<MediaContextType>({
     selectedStream: null,
     setSelectedStream: () => { },
+    focusedStream: null,
+    setFocusedStream: () => { },
     playStream: () => { },
     pauseStream: () => { },
     isStreamPlaying: () => false,
@@ -34,7 +39,7 @@ export const useMedia = () => {
 export default function MediaProvider({children}: {children: ReactNode;}) {
     const [isPlaying, setIsPlaying] = useState(false);
     const [selectedStream, setSelectedStream] = useState<Stream | null>(null);
-
+    const [focusedStream, setFocusedStream] = useState<Stream | null>(null);
     const playStream = useCallback((stream: Stream) => {
         // Stop any currently playing stream
         if (isPlaying && selectedStream) {
@@ -59,6 +64,8 @@ export default function MediaProvider({children}: {children: ReactNode;}) {
     const value: MediaContextType = {
         selectedStream,
         setSelectedStream,
+        focusedStream,
+        setFocusedStream,
         playStream,
         pauseStream,
         isStreamPlaying,
