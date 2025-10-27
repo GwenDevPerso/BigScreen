@@ -11,8 +11,7 @@ type MediaContextType = {
     setFocusedStream: (stream: Stream | null) => void;
 
     // Media control functions
-    playStream: (stream: Stream) => void;
-    pauseStream: () => void;
+    playPauseStream: (stream: Stream | null) => void;
 
     // Utility functions
     isStreamPlaying: (stream: Stream | null) => boolean;
@@ -23,8 +22,7 @@ const MediaContext = createContext<MediaContextType>({
     setSelectedStream: () => { },
     focusedStream: null,
     setFocusedStream: () => { },
-    playStream: () => { },
-    pauseStream: () => { },
+    playPauseStream: () => { },
     isStreamPlaying: () => false,
 });
 
@@ -40,20 +38,16 @@ export default function MediaProvider({children}: {children: ReactNode;}) {
     const [isPlaying, setIsPlaying] = useState(false);
     const [selectedStream, setSelectedStream] = useState<Stream | null>(null);
     const [focusedStream, setFocusedStream] = useState<Stream | null>(null);
-    const playStream = useCallback((stream: Stream) => {
-        // Stop any currently playing stream
-        if (isPlaying && selectedStream) {
-            console.log('Stopping current stream:', selectedStream.title);
-        }
 
-        setIsPlaying(true);
-
-    }, [isPlaying, selectedStream]);
-
-    const pauseStream = useCallback(() => {
-        if (isPlaying) {
+    const playPauseStream = useCallback((stream: Stream | null) => {
+        if (!stream) {
             setIsPlaying(false);
-            console.log('Pausing stream:', selectedStream?.title);
+            return;
+        }
+        if (isPlaying && selectedStream?.url === stream.url) {
+            setIsPlaying(false);
+        } else {
+            setIsPlaying(true);
         }
     }, [isPlaying, selectedStream]);
 
@@ -66,8 +60,7 @@ export default function MediaProvider({children}: {children: ReactNode;}) {
         setSelectedStream,
         focusedStream,
         setFocusedStream,
-        playStream,
-        pauseStream,
+        playPauseStream,
         isStreamPlaying,
     };
 

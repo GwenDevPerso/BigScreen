@@ -6,6 +6,7 @@ import {Stream} from "@/types/Stream.type";
 import {mapStreams} from "@/utils/stream.utils";
 import {SpatialNavigationNode, SpatialNavigationRoot, SpatialNavigationScrollView, SpatialNavigationView} from "react-tv-space-navigation";
 import {router, usePathname} from "expo-router";
+import PlayButton from "@/components/PlayButton";
 
 export default function HomeScreen() {
   const [streams, setStreams] = useState<Stream[]>([]);
@@ -98,39 +99,7 @@ export default function HomeScreen() {
             <Text style={styles.channel}>{selectedStream?.channel}</Text>
             <Text style={styles.title}>{selectedStream?.title}</Text>
 
-            <SpatialNavigationNode
-              isFocusable
-              onSelect={() => {
-                router.push({
-                  pathname: '/player',
-                  params: {
-                    stream: JSON.stringify(selectedStream)
-                  }
-                });
-              }}
-            >
-              {({isFocused}) => (
-                <Pressable
-                  style={[
-                    styles.playButton,
-                    isFocused && styles.playButtonFocused
-                  ]}
-                  tvParallaxProperties={{
-                    enabled: false,
-                  }}
-                >
-                  <Image
-                    source={isStreamPlaying(selectedStream)
-                      ? require("@/assets/images/pause.png")
-                      : require("@/assets/images/play.png")
-                    }
-                    resizeMode="contain"
-                    width={24}
-                    height={24}
-                  />
-                </Pressable>
-              )}
-            </SpatialNavigationNode>
+            <PlayButton type="navigation" />
           </View>
           {/* Channels */}
           <SpatialNavigationScrollView horizontal>
@@ -216,21 +185,5 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '500',
     fontFamily: 'Montserrat',
-  },
-
-  /**
-   * Play button
-   */
-  playButton: {
-    backgroundColor: '#333',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 80,
-    height: 48,
-    borderRadius: 8,
-  },
-  playButtonFocused: {
-    backgroundColor: '#00A0DF',
   },
 });

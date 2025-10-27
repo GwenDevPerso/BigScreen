@@ -13,8 +13,7 @@ describe('MediaContext', () => {
 
       expect(result.current.selectedStream).toBeNull();
       expect(typeof result.current.setSelectedStream).toBe('function');
-      expect(typeof result.current.playStream).toBe('function');
-      expect(typeof result.current.pauseStream).toBe('function');
+      expect(typeof result.current.playPauseStream).toBe('function');
       expect(typeof result.current.isStreamPlaying).toBe('function');
     });
 
@@ -77,7 +76,7 @@ describe('MediaContext', () => {
     });
   });
 
-  describe('playStream', () => {
+  describe('playPauseStream', () => {
     it('should set isPlaying to true when playing a stream', () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
       const {result} = renderHook(() => useMedia(), {
@@ -89,7 +88,7 @@ describe('MediaContext', () => {
       });
 
       act(() => {
-        result.current.playStream(mockStream1);
+        result.current.playPauseStream(mockStream1);
       });
 
       expect(result.current.isStreamPlaying(mockStream1)).toBe(true);
@@ -108,14 +107,14 @@ describe('MediaContext', () => {
       });
 
       act(() => {
-        result.current.playStream(mockStream1);
+        result.current.playPauseStream(mockStream1);
       });
 
       expect(result.current.isStreamPlaying(mockStream1)).toBe(true);
 
       act(() => {
         result.current.setSelectedStream(mockStream2);
-        result.current.playStream(mockStream2);
+        result.current.playPauseStream(mockStream2);
       });
 
       expect(result.current.isStreamPlaying(mockStream1)).toBe(false);
@@ -137,13 +136,13 @@ describe('MediaContext', () => {
       });
 
       act(() => {
-        result.current.playStream(mockStream1);
+        result.current.playPauseStream(mockStream1);
       });
 
       expect(result.current.isStreamPlaying(mockStream1)).toBe(true);
 
       act(() => {
-        result.current.pauseStream();
+        result.current.playPauseStream(null);
       });
 
       expect(result.current.isStreamPlaying(mockStream1)).toBe(false);
@@ -159,17 +158,17 @@ describe('MediaContext', () => {
 
       act(() => {
         result.current.setSelectedStream(mockStream1);
-        result.current.playStream(mockStream1);
+        result.current.playPauseStream(mockStream1);
       });
 
       act(() => {
-        result.current.pauseStream();
+        result.current.playPauseStream(null);
       });
 
       expect(result.current.isStreamPlaying(mockStream1)).toBe(false);
 
       act(() => {
-        result.current.pauseStream();
+        result.current.playPauseStream(null);
       });
 
       expect(result.current.isStreamPlaying(mockStream1)).toBe(false);
@@ -186,7 +185,7 @@ describe('MediaContext', () => {
 
       act(() => {
         result.current.setSelectedStream(mockStream1);
-        result.current.playStream(mockStream1);
+        result.current.playPauseStream(mockStream1);
       });
 
       expect(result.current.isStreamPlaying(mockStream1)).toBe(true);
@@ -199,7 +198,7 @@ describe('MediaContext', () => {
 
       act(() => {
         result.current.setSelectedStream(mockStream1);
-        result.current.playStream(mockStream1);
+        result.current.playPauseStream(mockStream1);
       });
 
       expect(result.current.isStreamPlaying(mockStream2)).toBe(false);
@@ -225,13 +224,13 @@ describe('MediaContext', () => {
 
       act(() => {
         result.current.setSelectedStream(mockStream1);
-        result.current.playStream(mockStream1);
+        result.current.playPauseStream(mockStream1);
       });
 
       expect(result.current.isStreamPlaying(mockStream1)).toBe(true);
 
       act(() => {
-        result.current.pauseStream();
+        result.current.playPauseStream(null);
       });
 
       expect(result.current.isStreamPlaying(mockStream1)).toBe(false);

@@ -2,8 +2,10 @@ import React, {useState} from "react";
 import {View, StyleSheet, Text} from "react-native";
 import Video from "react-native-video";
 import {Stream} from "../types/Stream.type";
+import {useMedia} from "@/contexts/MediaContext";
 
 export default function MediaPlayer({stream}: {stream: Stream;}) {
+    const {isStreamPlaying} = useMedia();
     const [error, setError] = useState<string | null>(null);
 
     return (
@@ -21,8 +23,8 @@ export default function MediaPlayer({stream}: {stream: Stream;}) {
                         uri: stream.url,
                     }}
                     style={styles.video}
-                    controls
                     resizeMode="contain"
+                    paused={!isStreamPlaying(stream)}
                     onError={(error) => {
                         console.log("Bad format video error:", {
                             url: stream.url,
@@ -77,7 +79,7 @@ const styles = StyleSheet.create({
     },
     video: {
         width: '100%',
-        height: '70%',
+        height: '90%',
         marginTop: 20,
     },
     errorContainer: {

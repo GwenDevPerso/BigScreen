@@ -31,8 +31,8 @@ export default function ChannelCardButton({
                     <Pressable
                         style={[
                             styles.container,
+                            selectedStream?.url === stream?.url && styles.selectedContainer,
                             isFocused && styles.focusedContainer,
-                            selectedStream?.url === stream?.url && styles.selectedContainer
                         ]}
                         onPress={() => {
                             if (focusedStream) {

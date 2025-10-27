@@ -2,18 +2,21 @@ import React from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
 import {useRouter, useLocalSearchParams, usePathname} from 'expo-router';
 import MediaPlayer from '@/components/MediaPlayer';
-import {SpatialNavigationNode, SpatialNavigationRoot} from 'react-tv-space-navigation';
+import {SpatialNavigationNode, SpatialNavigationRoot, SpatialNavigationView} from 'react-tv-space-navigation';
+import PlayButton from '@/components/PlayButton';
+import {useMedia} from '@/contexts/MediaContext';
 
 export default function PlayerScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
     const route = usePathname();
+    const {playPauseStream} = useMedia();
 
-    // Get stream data from params
     const streamData = params.stream ? JSON.parse(params.stream as string) : null;
 
     const handleBackPress = () => {
         router.back();
+        playPauseStream(null);
     };
 
     if (!streamData) {
@@ -42,25 +45,27 @@ export default function PlayerScreen() {
 
     return (
         <SpatialNavigationRoot isActive={route === '/player'}>
-
-            <View style={styles.container}>
+            <SpatialNavigationView direction="vertical" style={styles.container}>
                 <MediaPlayer stream={streamData} />
-                <SpatialNavigationNode
-                    isFocusable
-                    onSelect={handleBackPress}
-                >
-                    {({isFocused: spatialFocused}) => (
-                        <Pressable
-                            style={[
-                                styles.backButton,
-                                spatialFocused && styles.focused
-                            ]}
-                        >
-                            <Text style={styles.backButtonText}>← Back to Home</Text>
-                        </Pressable>
-                    )}
-                </SpatialNavigationNode>
-            </View>
+                <SpatialNavigationView direction='horizontal' style={styles.buttonsContainer}>
+                    <SpatialNavigationNode
+                        isFocusable
+                        onSelect={handleBackPress}
+                    >
+                        {({isFocused: spatialFocused}) => (
+                            <Pressable
+                                style={[
+                                    styles.backButton,
+                                    spatialFocused && styles.focused
+                                ]}
+                            >
+                                <Text style={styles.backButtonText}>← Back to Home</Text>
+                            </Pressable>
+                        )}
+                    </SpatialNavigationNode>
+                    <PlayButton type="regular" />
+                </SpatialNavigationView>
+            </SpatialNavigationView>
         </SpatialNavigationRoot>
     );
 }
@@ -84,17 +89,19 @@ const styles = StyleSheet.create({
         marginTop: 20,
         fontFamily: 'Montserrat',
     },
+    buttonsContainer: {
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 20,
+        gap: 20,
+    },
     backButton: {
         backgroundColor: '#333',
         paddingHorizontal: 20,
         paddingVertical: 10,
         borderRadius: 8,
-        marginTop: 20,
-        marginBottom: 20,
-        alignSelf: 'center',
-        position: 'absolute',
-        bottom: 20,
-        left: 20,
     },
     backButtonText: {
         color: '#fff',
