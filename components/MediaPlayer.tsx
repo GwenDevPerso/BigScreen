@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import {View, StyleSheet, Text} from "react-native";
 import Video from "react-native-video";
 import {Stream} from "../types/Stream.type";
@@ -23,7 +23,7 @@ export default function MediaPlayer({stream}: {stream: Stream;}) {
                     style={styles.video}
                     resizeMode="contain"
                     paused={!isStreamPlaying(stream)}
-                    onError={(error) => {
+                    onError={(error: any) => {
                         console.log("Bad format video error:", {
                             url: stream.url,
                             referrer: stream.referrer,

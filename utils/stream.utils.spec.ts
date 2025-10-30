@@ -1,47 +1,54 @@
-import {mockLogos, mockStreams} from '@/mocks';
-import {Stream} from '@/types/Stream.type';
-import {mapStreams} from './stream.utils';
+import { mapStreams } from './stream.utils';
+import { mockLogos, mockStreams } from '@/mocks';
 
-describe('stream.utils', () => {
-  it('should map streams with their logos', () => {
+const customStream = {
+  channel: 'Unknown',
+  feed: 'feedX',
+  title: 'Unknown Stream',
+  url: 'https://x',
+  referrer: '',
+  user_agent: '',
+  quality: 'HD'
+};
+
+describe('mapStreams', () => {
+  it('maps each stream to its matching logo', () => {
     const result = mapStreams(mockStreams, mockLogos);
-    
     expect(result).toHaveLength(2);
-    expect(result[0].logo).toBeDefined();
+    expect(result[0].channel).toBe('Channel1');
     expect(result[0].logo?.url).toBe('https://example.com/logo1.png');
-    expect(result[1].logo).toBeDefined();
     expect(result[1].logo?.url).toBe('https://example.com/logo2.png');
   });
 
-  it('should filter out streams without logos', () => {
+  it('filters streams with no matching logo', () => {
+    const noLogo = result => result.every(s => s.channel !== 'Channel3');
     const result = mapStreams(mockStreams, mockLogos);
-    
-    expect(result).not.toContainEqual(
-      expect.objectContaining({channel: 'Channel3'})
-    );
+    expect(noLogo(result)).toBe(true);
   });
 
-  it('should handle empty arrays', () => {
-    const result = mapStreams([], []);
-    
+  it('handles empty stream and logo arrays', () => {
+    expect(mapStreams([], [])).toEqual([]);
+    expect(mapStreams([], mockLogos)).toEqual([]);
+    expect(mapStreams(mockStreams, [])).toEqual([]);
+  });
+
+  it('ignores streams with logos missing url', () => {
+    const badLogos = [{ ...mockLogos[0], url: undefined }, ...mockLogos.slice(1)];
+    const result = mapStreams(mockStreams, badLogos);
+    expect(result).toHaveLength(1);
+    expect(result[0].logo?.url).toBe('https://example.com/logo2.png');
+  });
+
+  it('filters out non-matching channel/feeds', () => {
+    const result = mapStreams([customStream], mockLogos);
     expect(result).toEqual([]);
   });
 
-  it('should handle streams with no matching logos', () => {
-    const streamsWithNoLogos: Stream[] = [
-      {
-        channel: 'UnknownChannel',
-        feed: 'feed',
-        title: 'Unknown Stream',
-        url: 'https://example.com/unknown',
-        referrer: '',
-        user_agent: '',
-        quality: 'HD',
-      },
-    ];
-    
-    const result = mapStreams(streamsWithNoLogos, mockLogos);
-    
-    expect(result).toEqual([]);
+  it('can return streams with extended logo info', () => {
+    const logos = [...mockLogos, { ...mockLogos[0], channel: 'ChannelExtra', url: 'https://extra.png' }];
+    const extraStream = { ...mockStreams[0], channel: 'ChannelExtra' };
+    const result = mapStreams([extraStream], logos);
+    expect(result).toHaveLength(1);
+    expect(result[0].logo?.url).toBe('https://extra.png');
   });
 });

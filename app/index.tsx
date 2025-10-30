@@ -107,7 +107,6 @@ export default function HomeScreen() {
               {streams.map((stream, index) => (
                 <ChannelCardButton
                   key={stream.title + index}
-                  logo={stream.logo}
                   stream={stream}
                 />
               ))}

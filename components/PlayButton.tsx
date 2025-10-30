@@ -19,7 +19,7 @@ export default function PlayButton({type}: {type: 'regular' | 'navigation';}) {
             }
             playPauseStream(selectedStream);
         }}>
-            {({isFocused}) => (
+            {({isFocused}: {isFocused: boolean;}) => (
                 <Pressable
                     style={[
                         styles.playButton,
@@ -28,6 +28,7 @@ export default function PlayButton({type}: {type: 'regular' | 'navigation';}) {
                     tvParallaxProperties={{
                         enabled: false,
                     }}
+                    testID="play-button"
                 >
                     <Image
                         source={isStreamPlaying(selectedStream)

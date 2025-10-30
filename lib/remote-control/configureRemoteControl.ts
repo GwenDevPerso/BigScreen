@@ -1,6 +1,6 @@
 import {Directions, SpatialNavigation} from 'react-tv-space-navigation';
-import RemoteControlManager from './remote-control/RemoteControlManager';
-import {SupportedKeys} from './remote-control/SupportedKeys';
+import RemoteControlManager from './RemoteControlManager';
+import {SupportedKeys} from './SupportedKeys';
 
 SpatialNavigation.configureRemoteControl({
   remoteControlSubscriber: (callback) => {
@@ -29,3 +29,5 @@ SpatialNavigation.configureRemoteControl({
     RemoteControlManager.removeKeydownListener(remoteControlListener);
   },
 });
+
+

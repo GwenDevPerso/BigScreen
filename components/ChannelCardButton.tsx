@@ -5,12 +5,10 @@ import {useMedia} from '../contexts/MediaContext';
 import {Stream} from '../types/Stream.type';
 
 interface ChannelCardButtonProps {
-    logo?: Logo;
     stream: Stream;
 }
 
 export default function ChannelCardButton({
-    logo,
     stream,
 }: ChannelCardButtonProps) {
     const {selectedStream, setSelectedStream, setFocusedStream, focusedStream} = useMedia();
@@ -26,9 +24,10 @@ export default function ChannelCardButton({
                     setSelectedStream(stream);
                 }
             }}>
-            {({isFocused}) => {
+            {({isFocused}: {isFocused: boolean;}) => {
                 return (
                     <Pressable
+                        testID="channel-card-button"
                         style={[
                             styles.container,
                             selectedStream?.url === stream?.url && styles.selectedContainer,
@@ -41,16 +40,17 @@ export default function ChannelCardButton({
                         }}
                     >
                         <View style={styles.content}>
-                            {logo && (
+                            {stream.logo && (
                                 <Image
-                                    source={{uri: logo.url}}
+                                    testID="logo-image"
+                                    source={{uri: stream.logo.url}}
                                     style={[
                                         styles.logo,
                                         isFocused && styles.focusedLogo
                                     ]}
                                     resizeMode="contain"
                                     onError={() => {
-                                        console.log('Failed to load logo:', logo);
+                                        console.log('Failed to load logo:', stream.logo?.url);
                                     }}
                                 />
                             )}

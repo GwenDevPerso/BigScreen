@@ -9,3 +9,5 @@ export enum SupportedKeys {
     FastForward = 'FastForward',
     Rewind = 'Rewind',
 }
+
+

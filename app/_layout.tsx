@@ -11,7 +11,7 @@ import {
 import {useColorScheme} from '@/hooks/useColorScheme';
 import MediaProvider from '@/contexts/MediaContext';
 import {SpatialNavigationRoot} from 'react-tv-space-navigation';
-import './configureRemoteControl';
+import '@/lib/remote-control/configureRemoteControl';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

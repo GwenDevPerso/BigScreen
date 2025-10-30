@@ -1,6 +1,5 @@
 import {SupportedKeys} from './SupportedKeys';
 
-// Define a type for the listener function
 export type KeydownListener = (event: SupportedKeys) => void;
 
 export interface RemoteControlManagerInterface {
@@ -8,3 +7,5 @@ export interface RemoteControlManagerInterface {
   removeKeydownListener(listener: KeydownListener): void;
   emitKeyDown(key: SupportedKeys): void;
 }
+
+
