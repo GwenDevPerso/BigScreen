@@ -10,8 +10,6 @@ export default function MediaPlayer({stream}: {stream: Stream;}) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>{stream?.title}</Text>
-
             {error ? (
                 <View style={styles.errorContainer}>
                     <Text style={styles.errorTitle}>Impossible de lire le stream</Text>
@@ -53,7 +51,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#000',
-        padding: 20,
+        position: 'relative',
     },
     title: {
         color: '#fff',
@@ -78,9 +76,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Montserrat',
     },
     video: {
-        width: '100%',
-        height: '90%',
-        marginTop: 20,
+        ...StyleSheet.absoluteFillObject,
     },
     errorContainer: {
         flex: 1,

@@ -8,22 +8,19 @@ import {useMedia} from '@/contexts/MediaContext';
 
 export default function PlayerScreen() {
     const router = useRouter();
-    const params = useLocalSearchParams();
     const route = usePathname();
-    const {playPauseStream} = useMedia();
-
-    const streamData = params.stream ? JSON.parse(params.stream as string) : null;
+    const {playPauseStream, selectedStream} = useMedia();
 
     const handleBackPress = () => {
         router.back();
         playPauseStream(null);
     };
 
-    if (!streamData) {
+    if (!selectedStream) {
         return (
             <View style={styles.container}>
                 <Text style={styles.errorText}>No stream data available</Text>
-                <Text style={styles.debugText}>Params: {JSON.stringify(params)}</Text>
+                <Text style={styles.debugText}>Params: {JSON.stringify(selectedStream)}</Text>
                 <SpatialNavigationNode
                     isFocusable
                     onSelect={handleBackPress}
@@ -46,7 +43,7 @@ export default function PlayerScreen() {
     return (
         <SpatialNavigationRoot isActive={route === '/player'}>
             <SpatialNavigationView direction="vertical" style={styles.container}>
-                <MediaPlayer stream={streamData} />
+                <MediaPlayer stream={selectedStream} />
                 <SpatialNavigationView direction='horizontal' style={styles.buttonsContainer}>
                     <SpatialNavigationNode
                         isFocusable
@@ -96,6 +93,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 20,
         gap: 20,
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 0,
     },
     backButton: {
         backgroundColor: '#333',

@@ -10,10 +10,8 @@ type MediaContextType = {
     focusedStream: Stream | null;
     setFocusedStream: (stream: Stream | null) => void;
 
-    // Media control functions
     playPauseStream: (stream: Stream | null) => void;
 
-    // Utility functions
     isStreamPlaying: (stream: Stream | null) => boolean;
 };
 

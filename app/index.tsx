@@ -1,17 +1,17 @@
-import {StyleSheet, View, Text, Alert, Image, ImageBackground, ScrollView, Pressable} from "react-native";
+import {StyleSheet, View, Text, Alert, Image, ImageBackground} from "react-native";
 import ChannelCardButton from "@/components/ChannelCardButton";
 import {useEffect, useState} from "react";
 import {useMedia} from "@/contexts/MediaContext";
 import {Stream} from "@/types/Stream.type";
 import {mapStreams} from "@/utils/stream.utils";
-import {SpatialNavigationNode, SpatialNavigationRoot, SpatialNavigationScrollView, SpatialNavigationView} from "react-tv-space-navigation";
-import {router, usePathname} from "expo-router";
+import {SpatialNavigationRoot, SpatialNavigationScrollView, SpatialNavigationView} from "react-tv-space-navigation";
+import {usePathname} from "expo-router";
 import PlayButton from "@/components/PlayButton";
 
 export default function HomeScreen() {
   const [streams, setStreams] = useState<Stream[]>([]);
   const [loading, setLoading] = useState(true);
-  const {selectedStream, setSelectedStream, isStreamPlaying} = useMedia();
+  const {selectedStream, setSelectedStream} = useMedia();
   const route = usePathname();
 
   useEffect(() => {
